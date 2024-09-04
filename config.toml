@@ -75,8 +75,8 @@ navigation = [
   { url = "https://github.com/xj63/Algorithm-Implementation-Notes", title = "GitHub", is_external = true },
 ]
 
-home_title = "Algorithm Impl Notes"
-home_content = "Welcome to xj63's algorithm implementation notes!<br><b>Algorithm-Implementation-Notes</b> is notes on the code implementation of the corresponding algorithms in the Algorithm Design and Analysis course. <br>Do give a 🌟 on Github !<br>"
+home_title = "算法实现笔记"
+home_content = "欢迎来到xj63's算法实现笔记 🌟<br><b>算法设计与分析课程</b> 中算法的代码实现笔记<br>"
 social_icons = [
   { url = "https://github.com/xj63", title = "GitHub", icon = "github" },
   { url = "$BASE_URL/atom.xml", title = "RSS", icon = "rss" },
