@@ -1,5 +1,5 @@
 <p align="right">
-  English / <a href="./README.zh-CN.md">简体中文</a>
+  English / <a href="./README.md">简体中文</a>
 </p>
 
 <h1 align="center">Algorithm Implementation Notes</h1>
