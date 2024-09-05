@@ -5,7 +5,7 @@ use std::cmp::Ordering;
 #[allow(dead_code)]
 fn split_at<T>(slice: &[T], index: usize) -> (&[T], Option<&T>, &[T]) {
     if index >= slice.len() {
-        return (&[], None, &[]);
+        return (slice, None, &[]);
     }
     (&slice[..index], Some(&slice[index]), &slice[index + 1..])
 }
@@ -110,7 +110,7 @@ use num_traits::Num;
 #[allow(dead_code)]
 fn linear_search<T>(target: &T, slice: &[T]) -> Option<usize>
 where
-    T: Ord + Num + Into<f64> + Copy + Clone + std::fmt::Debug,
+    T: Ord + Num + Into<f64> + Copy + Clone,
 {
     let first = slice.first()?;
     let last = slice.last()?;
