@@ -30,6 +30,10 @@ pub fn merge_sort_parallel(array: &mut [i32]) {
     unsafe { cbind::merge_sort_parallel(array.len() as u32, array.as_mut_ptr()) }
 }
 
+pub fn radix_lsd_sort(array: &mut [i32]) {
+    unsafe { cbind::radix_lsd_sort(array.len() as u32, array.as_mut_ptr()) }
+}
+
 pub fn cstd_qsort(array: &mut [i32]) {
     unsafe { cbind::std_qsort(array.len() as u32, array.as_mut_ptr()) }
 }
@@ -185,6 +189,11 @@ mod tests {
     }
 
     #[test]
+    fn radix_lsd() {
+        utils::test_all(radix_lsd_sort);
+    }
+
+    #[test]
     fn qsort_cstd() {
         utils::test_all(cstd_qsort);
     }
@@ -300,6 +309,20 @@ mod tests {
 
             bench_all!(
                 insertion_sort,
+                random,
+                stroll,
+                trend_increasing,
+                gaussian_with_noise,
+                low_sample_sin_with_noise,
+                high_sample_sin_with_noise
+            );
+        }
+
+        mod radix_lsd {
+            use super::*;
+
+            bench_all!(
+                radix_lsd_sort,
                 random,
                 stroll,
                 trend_increasing,

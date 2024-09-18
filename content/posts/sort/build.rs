@@ -16,6 +16,7 @@ fn main() {
         .file("./c-src/insertion-sort.c")
         .file("./c-src/selection-sort.c")
         .file("./c-src/std-qsort.c")
+        .file("./c-src/radix-sort.c")
         .flag("-fopenmp")
         .compile("csort");
 

@@ -1,10 +1,9 @@
 #include "sort.h"
+#include <stdbool.h>
 
 void merge_sort_rec(unsigned len, int array[len]) {
-  if (len <= 2) {
-    merge_two_sorted_array(len, array, (len + 1) / 2);
+  if (len <= 1)
     return;
-  }
 
   unsigned half = len / 2;
   merge_sort_rec(half, array);
@@ -49,19 +48,20 @@ void merge_adjacent_blocks(unsigned len, int array[len], unsigned block_size) {
     merge_two_sorted_array(block_size + lave, &array[len - lave - block_size],
                            block_size);
   }
-
-  merge_adjacent_blocks(len, array, block_size * 2);
 }
 
 void merge_sort_parallel(unsigned len, int array[len]) {
   unsigned block_size = parallel_sort_blocks(len, array);
-  merge_adjacent_blocks(len, array, block_size);
+  for (; block_size <= len; block_size *= 2)
+    merge_adjacent_blocks(len, array, block_size);
 }
 
-void merge_sort(unsigned len, int array[len]) {
-  merge_adjacent_blocks(len, array, 1);
-  /* merge_sort_rec(len, array); */
+void merge_sort_adjacent_blocks(unsigned len, int array[len]) {
+  for (unsigned block_size = 1; block_size <= len; block_size *= 2)
+    merge_adjacent_blocks(len, array, block_size);
 }
+
+void merge_sort(unsigned len, int array[len]) { merge_sort_rec(len, array); }
 
 /* #define TEST */
 #ifdef TEST

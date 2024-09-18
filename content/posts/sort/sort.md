@@ -3,12 +3,12 @@ title = "排序 | Sort"
 date = "2024-09-17"
 
 [taxonomies]
-tags = ["array", "sort", "bench", "test"]
+tags = ["array", "sort", "test"]
 +++
 
 排序算法（Sorting Algorithm）是一种将一组特定的数据按某种顺序进行排列的算法。
 
-冒泡排序 | 选择排序 | 插入排序 | 归并排序
+冒泡排序 | 选择排序 | 插入排序 | 归并排序 | 基数排序
 
 <!-- more -->
 
@@ -252,3 +252,210 @@ void merge_sort_rec(unsigned len, int array[len]) {
 ```
 
 `merge_sort_rec` 递归地将数组划分成更小的数组，直到数组长度小于等于1，然后合并两个有序数组。
+
+对于自底向上，将数组划分为一系列的有序的块(n)，对于每个两个相邻的块进行合并为一个块(n/2)，
+每次合并其块总数变为一半，块的大小变为两倍，然后再对相邻块合并，直到块的大小超过了数组长度。
+
+```c
+void merge_adjacent_blocks(unsigned len, int array[len], unsigned block_size) {
+  if (block_size >= len)
+    // Only have one block and have sorted.
+    return;
+
+  unsigned blocks = len / block_size; // blocks >= 1
+  for (unsigned i = 0; i < blocks / 2; i++)
+    merge_two_sorted_array(block_size * 2, &array[i * 2 * block_size], block_size);
+
+  if (blocks % 2 == 1 && len > block_size * blocks) {
+    // The last block is not full and remain the second last block not merge.
+    unsigned lave = len - block_size * blocks;
+    merge_two_sorted_array(block_size + lave, &array[len - lave - block_size], block_size);
+  }
+}
+
+void merge_sort_adjacent_blocks(unsigned len, int array[len]) {
+  for (unsigned block_size = 1; block_size <= len; block_size *= 2)
+    merge_adjacent_blocks(len, array, block_size);
+}
+```
+
+然后我们就可以将数组划分为多个块，并行的进行排序。
+使用 `openmp` 对多个块并行排序，然后再合并排好序的数组。
+
+```c
+// return block_size
+unsigned parallel_sort_blocks(unsigned len, int array[len]) {
+  const unsigned DEFAULT_BLOCK_SIZE = 128;
+  const unsigned MAX_BLOCKS = 64;
+  unsigned block_size = len / DEFAULT_BLOCK_SIZE > MAX_BLOCKS
+                            ? len / MAX_BLOCKS
+                            : DEFAULT_BLOCK_SIZE;
+  unsigned blocks = len / block_size;
+
+#pragma omp parallel for
+  for (unsigned i = 0; i < blocks; i++)
+    merge_sort_rec(block_size, &array[i * block_size]);
+
+  if (len > block_size * blocks)
+    // the last block is not full.
+    merge_sort_rec(len - (blocks * block_size), &array[blocks * block_size]);
+
+  return block_size;
+}
+
+void merge_sort_parallel(unsigned len, int array[len]) {
+  unsigned block_size = parallel_sort_blocks(len, array);
+  for (; block_size <= len; block_size *= 2)
+    merge_adjacent_blocks(len, array, block_size);
+}
+```
+
+## 基数排序 | Radix LSD Sort
+
+```c
+typedef struct LinkNode {
+  unsigned data;
+  struct LinkNode *next;
+} LinkNode;
+
+typedef struct LinkList {
+  LinkNode *head;
+  LinkNode *tail;
+} LinkList;
+```
+
+定义链表，使用 `VLA` 可变长数组在栈上创建一段缓冲区 `LinkNode node_buf[len]`
+
+基数排序将一个数字分为 `num_of_keys` 个子数字，每个子数字的范围是 `[0, base)` 个数字。
+根据最后一个子数字的大小，将元素分到 `base` 个桶中，然后再将桶合并。
+接下来根据第二个子数字的大小，分配然后合并，如此往复，最终将整个数组排序。
+
+```c
+/// Radix LSD Sort
+///
+/// default base is 256, number of keys is 4
+/// radix_lsd_sort_with(len, array[len], 256, 4);
+///
+/// # Example
+///
+/// int array[] = {1, 3, 5, 0, 3, 4, 4, 8};
+/// radix_sort(8, array);
+/// // array = {0, 1, 3, 3, 4, 4, 5, 8}
+void radix_lsd_sort(unsigned len, int array[len]) {
+  const unsigned BIAS = UINT_MAX / 2 + 1;
+  for (unsigned i = 0; i < len; i++)
+    array[i] = (unsigned)array[i] + BIAS;
+
+  radix_lsd_sort_with(len, (unsigned *)array, 256, 4);
+
+  for (unsigned i = 0; i < len; i++)
+    array[i] = (int)(array[i] - BIAS);
+}
+```
+
+为了能对有符号数据进行基数排序，我们需要将数据转换为无符号数并保留大小关系，排完序后再转换回来。
+然后调用 `radix_lsd_sort_with(len, array, 256, 4)` 以基数 256 排序，并将数字分为 4 个子数字。
+对于编译器能否将常量基数 256 优化称右移，看造化吧 :)
+
+```c
+/// Radix LSD Sort with base and number of keys
+///
+/// Split the element into `num_of_keys` keys no greater than `base`
+///
+/// # Warning
+///
+/// The element of `array` must be no greater than `num_of_keys * base`
+static inline void radix_lsd_sort_with(unsigned len, unsigned array[len],
+                                       unsigned base, unsigned num_of_keys) {
+  LinkNode node_buf[len];
+  LinkList list = array2linklist(len, array, node_buf);
+
+  for (unsigned i = 0, offset = 1; i < num_of_keys; i += 1, offset *= base)
+    list = radix_split_and_merge(list, offset, base);
+
+  linklist2array(len, list, array);
+}
+```
+
+先将数组转换为链表，然后对链表进行基数排序，最后再将链表转换为数组。
+对链表进行基数排序，只需要对链表中的元素 `(e / offset) % base` 然后桶装然后合并，
+如此重复 `num_of_keys` 次（并更新 `offset`）就获得一个有序的链表。
+
+```c
+static inline LinkList radix_split_and_merge(LinkList list, unsigned offset,
+                                             unsigned base) {
+  LinkList bucket[base];
+  for (unsigned i = 0; i < base; i++)
+    bucket[i] = (LinkList){.head = NULL, .tail = NULL};
+
+  LinkNode *iter = list.head;
+  while (iter != NULL) {
+    unsigned index = (iter->data / offset) % base;
+    LinkNode *next = linklist_push_one(&bucket[index], iter);
+    iter = next;
+  }
+
+  LinkList result = bucket[0];
+  for (unsigned i = 1; i < base; i++)
+    result = linklist_append(result, bucket[i]);
+  return result;
+}
+```
+
+迭代遍历链表，将链表中的元素 `(e / offset) % base` 然后插入桶 `bucket[base]` 中，然后合并所有桶。
+
+# BenchMark
+
+本次设计仍有问题，不具有参考价值。
+
+```console
+test csort::tests::bench::bubble::gaussian_with_noise                ... bench:     340,889.20 ns/iter (+/- 130,392.50)
+test csort::tests::bench::bubble::high_sample_sin_with_noise         ... bench:     339,712.45 ns/iter (+/- 12,469.97)
+test csort::tests::bench::bubble::low_sample_sin_with_noise          ... bench:     340,981.80 ns/iter (+/- 110,796.67)
+test csort::tests::bench::bubble::random                             ... bench:  34,957,551.50 ns/iter (+/- 3,410,550.90)
+test csort::tests::bench::bubble::stroll                             ... bench:  34,862,127.00 ns/iter (+/- 3,108,527.50)
+test csort::tests::bench::bubble::trend_increasing                   ... bench:     341,875.30 ns/iter (+/- 125,752.78)
+test csort::tests::bench::cstd_qsort::gaussian_with_noise            ... bench:      14,948.66 ns/iter (+/- 9,671.89)
+test csort::tests::bench::cstd_qsort::high_sample_sin_with_noise     ... bench:      15,045.78 ns/iter (+/- 9,829.04)
+test csort::tests::bench::cstd_qsort::low_sample_sin_with_noise      ... bench:      15,038.26 ns/iter (+/- 3,390.93)
+test csort::tests::bench::cstd_qsort::random                         ... bench:     185,289.35 ns/iter (+/- 90,925.77)
+test csort::tests::bench::cstd_qsort::stroll                         ... bench:     186,603.78 ns/iter (+/- 54,371.42)
+test csort::tests::bench::cstd_qsort::trend_increasing               ... bench:      14,965.57 ns/iter (+/- 990.55)
+test csort::tests::bench::insertion::gaussian_with_noise             ... bench:         474.50 ns/iter (+/- 52.69)
+test csort::tests::bench::insertion::high_sample_sin_with_noise      ... bench:         474.28 ns/iter (+/- 125.33)
+test csort::tests::bench::insertion::low_sample_sin_with_noise       ... bench:         468.62 ns/iter (+/- 178.76)
+test csort::tests::bench::insertion::random                          ... bench:       4,677.77 ns/iter (+/- 1,472.75)
+test csort::tests::bench::insertion::stroll                          ... bench:       4,702.79 ns/iter (+/- 3,031.50)
+test csort::tests::bench::insertion::trend_increasing                ... bench:         474.13 ns/iter (+/- 216.46)
+test csort::tests::bench::merge::gaussian_with_noise                 ... bench:       8,029.80 ns/iter (+/- 2,176.44)
+test csort::tests::bench::merge::high_sample_sin_with_noise          ... bench:       7,707.73 ns/iter (+/- 813.41)
+test csort::tests::bench::merge::low_sample_sin_with_noise           ... bench:       7,769.37 ns/iter (+/- 59.58)
+test csort::tests::bench::merge::random                              ... bench:      84,954.48 ns/iter (+/- 1,245.39)
+test csort::tests::bench::merge::stroll                              ... bench:      85,204.15 ns/iter (+/- 2,103.85)
+test csort::tests::bench::merge::trend_increasing                    ... bench:       7,769.06 ns/iter (+/- 66.77)
+test csort::tests::bench::merge_parallel::gaussian_with_noise        ... bench:       5,455.78 ns/iter (+/- 1,242.05)
+test csort::tests::bench::merge_parallel::high_sample_sin_with_noise ... bench:       5,548.66 ns/iter (+/- 1,807.09)
+test csort::tests::bench::merge_parallel::low_sample_sin_with_noise  ... bench:       5,476.28 ns/iter (+/- 494.94)
+test csort::tests::bench::merge_parallel::random                     ... bench:      36,199.32 ns/iter (+/- 5,999.14)
+test csort::tests::bench::merge_parallel::stroll                     ... bench:      36,338.08 ns/iter (+/- 11,186.60)
+test csort::tests::bench::merge_parallel::trend_increasing           ... bench:       5,486.77 ns/iter (+/- 408.39)
+test csort::tests::bench::radix_lsd::gaussian_with_noise             ... bench:       9,347.28 ns/iter (+/- 159.57)
+test csort::tests::bench::radix_lsd::high_sample_sin_with_noise      ... bench:       9,176.39 ns/iter (+/- 197.14)
+test csort::tests::bench::radix_lsd::low_sample_sin_with_noise       ... bench:       8,921.27 ns/iter (+/- 189.30)
+test csort::tests::bench::radix_lsd::random                          ... bench:      73,262.34 ns/iter (+/- 536.66)
+test csort::tests::bench::radix_lsd::stroll                          ... bench:      68,302.56 ns/iter (+/- 778.09)
+test csort::tests::bench::radix_lsd::trend_increasing                ... bench:       8,745.26 ns/iter (+/- 206.40)
+test csort::tests::bench::rust_stable::gaussian_with_noise           ... bench:         237.93 ns/iter (+/- 8.98)
+test csort::tests::bench::rust_stable::high_sample_sin_with_noise    ... bench:         235.83 ns/iter (+/- 186.60)
+test csort::tests::bench::rust_stable::low_sample_sin_with_noise     ... bench:         236.56 ns/iter (+/- 5.78)
+test csort::tests::bench::rust_stable::random                        ... bench:       2,346.31 ns/iter (+/- 37.19)
+test csort::tests::bench::rust_stable::stroll                        ... bench:       2,360.04 ns/iter (+/- 43.39)
+test csort::tests::bench::rust_stable::trend_increasing              ... bench:         235.54 ns/iter (+/- 3.81)
+test csort::tests::bench::selection::gaussian_with_noise             ... bench:     372,126.70 ns/iter (+/- 4,828.52)
+test csort::tests::bench::selection::high_sample_sin_with_noise      ... bench:     370,465.57 ns/iter (+/- 2,651.91)
+test csort::tests::bench::selection::low_sample_sin_with_noise       ... bench:     370,717.30 ns/iter (+/- 3,108.06)
+test csort::tests::bench::selection::random                          ... bench:  37,867,238.80 ns/iter (+/- 393,008.45)
+test csort::tests::bench::selection::stroll                          ... bench:  37,757,740.20 ns/iter (+/- 315,227.42)
+test csort::tests::bench::selection::trend_increasing                ... bench:     380,573.42 ns/iter (+/- 6,010.24)
+test merge_two_sorted::tests::bench::array1k                         ... bench:         238.10 ns/iter (+/- 4.32)
+```
