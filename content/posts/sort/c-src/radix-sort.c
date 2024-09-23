@@ -66,12 +66,18 @@ static inline void linklist2array(unsigned len, const LinkList list,
     array[i++] = iter->data;
 }
 
+/// Divide the linked list into base linked lists, and distribute the result
+/// of dividing element by offset modulo base into base linked lists.
+/// Then merge all base linked lists into one.
 static inline LinkList radix_split_and_merge(LinkList list, unsigned offset,
                                              unsigned base) {
+  // create base linked lists bucket.
   LinkList bucket[base];
   for (unsigned i = 0; i < base; i++)
     bucket[i] = (LinkList){.head = NULL, .tail = NULL};
 
+  // Iterate over all elements in the linked list
+  // and assign them to the base linked lists.
   LinkNode *iter = list.head;
   while (iter != NULL) {
     unsigned index = (iter->data / offset) % base;
@@ -79,6 +85,7 @@ static inline LinkList radix_split_and_merge(LinkList list, unsigned offset,
     iter = next;
   }
 
+  // merge all base linked lists into one.
   LinkList result = bucket[0];
   for (unsigned i = 1; i < base; i++)
     result = linklist_append(result, bucket[i]);
@@ -94,13 +101,14 @@ static inline LinkList radix_split_and_merge(LinkList list, unsigned offset,
 /// The element of `array` must be no greater than `num_of_keys * base`
 static inline void radix_lsd_sort_with(unsigned len, unsigned array[len],
                                        unsigned base, unsigned num_of_keys) {
-  LinkNode node_buf[len];
-  LinkList list = array2linklist(len, array, node_buf);
+  LinkNode node_buf[len]; // create a buffer for linklist.
+  LinkList list = array2linklist(len, array, node_buf); // copy to linklist
 
+  // use radix lsd sort the linklist.
   for (unsigned i = 0, offset = 1; i < num_of_keys; i += 1, offset *= base)
     list = radix_split_and_merge(list, offset, base);
 
-  linklist2array(len, list, array);
+  linklist2array(len, list, array); // copy back to array.
 }
 
 /// Radix LSD Sort
@@ -114,12 +122,18 @@ static inline void radix_lsd_sort_with(unsigned len, unsigned array[len],
 /// radix_sort(8, array);
 /// // array = {0, 1, 3, 3, 4, 4, 5, 8}
 void radix_lsd_sort(unsigned len, int array[len]) {
-  const unsigned BIAS = UINT_MAX / 2 + 1;
+  // Convert a signed number to an unsigned number
+  // and preserve the size relationship.
+  const unsigned BIAS = UINT_MAX / 2 + 1; // BIAS = 1 * 2^31
+  // Add BIAS to each element.
   for (unsigned i = 0; i < len; i++)
     array[i] = (unsigned)array[i] + BIAS;
 
+  // Divide a u32(4 bytes) into 4 u8(1 byte, [0, 256)) subsets and use radix lsd
+  // sort.
   radix_lsd_sort_with(len, (unsigned *)array, 256, 4);
 
+  // Restore the original value.
   for (unsigned i = 0; i < len; i++)
     array[i] = (int)(array[i] - BIAS);
 }
