@@ -326,7 +326,7 @@ typedef struct LinkList {
 
 定义链表，使用 `VLA` 可变长数组在栈上创建一段缓冲区 `LinkNode node_buf[len]`
 
-基数排序将一个数字分为 `num_of_keys` 个子数字，每个子数字的范围是 `[0, base)` 个数字。
+基数排序将一个数字分为 `num_of_keys` 个子数字，每个子数字的范围是 `[0, base)`。
 根据最后一个子数字的大小，将元素分到 `base` 个桶中，然后再将桶合并。
 接下来根据第二个子数字的大小，分配然后合并，如此往复，最终将整个数组排序。
 
@@ -355,7 +355,7 @@ void radix_lsd_sort(unsigned len, int array[len]) {
 
 为了能对有符号数据进行基数排序，我们需要将数据转换为无符号数并保留大小关系，排完序后再转换回来。
 然后调用 `radix_lsd_sort_with(len, array, 256, 4)` 以基数 256 排序，并将数字分为 4 个子数字。
-对于编译器能否将常量基数 256 优化称右移，看造化吧 :)
+对于编译器能否将常量基数 256 优化成右移，看造化吧 :)
 
 ```c
 /// Radix LSD Sort with base and number of keys
