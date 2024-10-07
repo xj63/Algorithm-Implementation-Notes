@@ -8,7 +8,7 @@ tags = ["array", "sort", "test"]
 
 排序算法（Sorting Algorithm）是一种将一组特定的数据按某种顺序进行排列的算法。
 
-冒泡排序 | 选择排序 | 插入排序 | 归并排序 | 基数排序
+冒泡排序 | 选择排序 | 插入排序 | 归并排序 | 基数排序 | 快速排序
 
 <!-- more -->
 
@@ -404,6 +404,36 @@ static inline LinkList radix_split_and_merge(LinkList list, unsigned offset,
 
 迭代遍历链表，将链表中的元素 `(e / offset) % base` 然后插入桶 `bucket[base]` 中，然后合并所有桶。
 
+## 快速排序 | Quick Sort
+
+```c
+void quick_sort(unsigned len, int array[len]) {
+  if (len <= 1)
+    return;
+
+  int pivot = array[0]; // take first as pivot
+  int *left = &array[1];
+  int *right = &array[len];
+
+  while (left < right) {
+    if (*left <= pivot) {
+      left += 1;
+    } else {
+      right -= 1;
+      SWAP(*left, *right);
+    }
+  }
+
+  SWAP(*(left - 1), array[0]);
+
+  quick_sort(left - array - 1, array);
+  quick_sort(array + len - right, right);
+}
+```
+
+选择第一个元素作为基准，将数组分为两部分，左边的都比基准小，右边的都比基准大。
+然后递归地对左边和右边的数组进行快速排序。
+
 # BenchMark
 
 本次设计仍有问题，不具有参考价值。
@@ -439,6 +469,12 @@ test csort::tests::bench::merge_parallel::low_sample_sin_with_noise  ... bench: 
 test csort::tests::bench::merge_parallel::random                     ... bench:      36,199.32 ns/iter (+/- 5,999.14)
 test csort::tests::bench::merge_parallel::stroll                     ... bench:      36,338.08 ns/iter (+/- 11,186.60)
 test csort::tests::bench::merge_parallel::trend_increasing           ... bench:       5,486.77 ns/iter (+/- 408.39)
+test csort::tests::bench::quick_sort::gaussian_with_noise            ... bench:      27,331.49 ns/iter (+/- 628.50)
+test csort::tests::bench::quick_sort::high_sample_sin_with_noise     ... bench:      27,288.86 ns/iter (+/- 563.52)
+test csort::tests::bench::quick_sort::low_sample_sin_with_noise      ... bench:      27,170.24 ns/iter (+/- 439.15)
+test csort::tests::bench::quick_sort::random                         ... bench:     822,955.95 ns/iter (+/- 18,973.80)
+test csort::tests::bench::quick_sort::stroll                         ... bench:     806,819.55 ns/iter (+/- 14,638.76)
+test csort::tests::bench::quick_sort::trend_increasing               ... bench:      27,341.90 ns/iter (+/- 705.38)
 test csort::tests::bench::radix_lsd::gaussian_with_noise             ... bench:       9,347.28 ns/iter (+/- 159.57)
 test csort::tests::bench::radix_lsd::high_sample_sin_with_noise      ... bench:       9,176.39 ns/iter (+/- 197.14)
 test csort::tests::bench::radix_lsd::low_sample_sin_with_noise       ... bench:       8,921.27 ns/iter (+/- 189.30)

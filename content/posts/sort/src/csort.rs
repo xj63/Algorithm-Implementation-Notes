@@ -38,6 +38,10 @@ pub fn cstd_qsort(array: &mut [i32]) {
     unsafe { cbind::std_qsort(array.len() as u32, array.as_mut_ptr()) }
 }
 
+pub fn quick_sort(array: &mut [i32]) {
+    unsafe { cbind::quick_sort(array.len() as u32, array.as_mut_ptr()) }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -198,6 +202,11 @@ mod tests {
         utils::test_all(cstd_qsort);
     }
 
+    #[test]
+    fn quick() {
+        utils::test_all(quick_sort);
+    }
+
     mod bench {
         use super::*;
         use crate::read_bench_data;
@@ -355,6 +364,20 @@ mod tests {
 
             bench_all!(
                 rust_stable,
+                random,
+                stroll,
+                trend_increasing,
+                gaussian_with_noise,
+                low_sample_sin_with_noise,
+                high_sample_sin_with_noise
+            );
+        }
+
+        mod quick_sort {
+            use super::*;
+
+            bench_all!(
+                quick_sort,
                 random,
                 stroll,
                 trend_increasing,

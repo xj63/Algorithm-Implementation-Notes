@@ -57,6 +57,9 @@ void merge_sort_parallel(unsigned len, int array[len]);
 /// c std qsort
 void std_qsort(unsigned len, int array[len]);
 
+/// Quick sort
+void quick_sort(unsigned len, int array[len]);
+
 /// Radix LSD Sort
 ///
 /// default base is 256, number of keys is 4
