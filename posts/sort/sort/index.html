@@ -1,0 +1,337 @@
+<!doctype html><html dir=auto lang=en><head><meta charset=utf-8><meta content="IE=edge" http-equiv=X-UA-Compatible><meta content="width=device-width,initial-scale=1,shrink-to-fit=no" name=viewport><meta content="index, follow" name=robots><title>排序 | Sort</title><meta content="Algorithm, Code, Notes" name=keywords><meta name=description><meta content=xj63 name=author><link href=https://xj63.github.io/Algorithm-Implementation-Notes/posts/sort/sort/ rel=canonical><link href=https://xj63.github.io/Algorithm-Implementation-Notes/css/includes/scroll-bar.css rel=stylesheet><link href=https://xj63.github.io/Algorithm-Implementation-Notes/css/styles.css rel=stylesheet><link href=https://xj63.github.io/Algorithm-Implementation-Notes/css/override.css rel=stylesheet><link href=https://xj63.github.io/Algorithm-Implementation-Notes/atom.xml rel=alternate title=RSS type=application/atom+xml><noscript><style>#theme-toggle,.top-link{display:none}</style> <style>@media (prefers-color-scheme:dark){:root{--theme:#1d1e20;--entry:#2e2e33;--primary:#dadadb;--secondary:#9b9c9d;--tertiary:#414244;--content:#c4c4c5;--hljs-bg:#2e2e33;--code-bg:#37383e;--border:#333}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><body id=top><script>if(localStorage.getItem(`pref-theme`)===`dark`){document.body.classList.add(`dark`)}else if(localStorage.getItem(`pref-theme`)===`light`){document.body.classList.remove(`dark`)}else if(window.matchMedia(`(prefers-color-scheme: dark)`).matches){document.body.classList.add(`dark`)}</script><header class=header><nav class=nav><div class=logo><a title="Algorithm Impl Notes (Alt + H)" accesskey=h href=https://xj63.github.io/Algorithm-Implementation-Notes> Algorithm Impl Notes </a><div class=logo-switches><button title="(Alt + T)" accesskey=t id=theme-toggle><svg viewbox="0 0 24 24" fill=none height=18 id=moon stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 width=24 xmlns=http://www.w3.org/2000/svg><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg> <svg viewbox="0 0 24 24" fill=none height=18 id=sun stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 width=24 xmlns=http://www.w3.org/2000/svg><circle cx=12 cy=12 r=5></circle><line x1=12 x2=12 y1=1 y2=3></line><line x1=12 x2=12 y1=21 y2=23></line><line x1=4.22 x2=5.64 y1=4.22 y2=5.64></line><line x1=18.36 x2=19.78 y1=18.36 y2=19.78></line><line x1=1 x2=3 y1=12 y2=12></line><line x1=21 x2=23 y1=12 y2=12></line><line x1=4.22 x2=5.64 y1=19.78 y2=18.36></line><line x1=18.36 x2=19.78 y1=5.64 y2=4.22></line></svg></button><ul class=lang-switch><li></ul></div></div><ul id=menu><li><a href=https://xj63.github.io/Algorithm-Implementation-Notes/archive title=Archive> <span>Archive</span> </a><li><a href=https://xj63.github.io/Algorithm-Implementation-Notes/tags title=Tags> <span>Tags</span> </a><li><a href=https://xj63.github.io/Algorithm-Implementation-Notes/search title=Search> <span>Search</span> </a><li><a href=https://github.com/xj63/Algorithm-Implementation-Notes title=GitHub> <span>GitHub</span> <svg viewbox="0 0 24 24" fill=none height=12 shape-rendering=geometricPrecision stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2.5 width=12><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path><path d="M15 3h6v6"></path><path d="M10 14L21 3"></path></svg> </a></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://xj63.github.io/Algorithm-Implementation-Notes>Home</a> »  <a href=https://xj63.github.io/Algorithm-Implementation-Notes/posts/>Posts</a> »  <a href=https://xj63.github.io/Algorithm-Implementation-Notes/posts/sort/sort/>排序 | Sort</a></div><h1 class=post-title>排序 | Sort</h1><div class=post-meta><span title="2024-09-17 00:00:00 +0000">2024-09-17</span> · 8 min · xj63  | <a rel="noopener noreferrer" href=https://github.com/xj63/Algorithm-Implementation-Notes/tree/master/content/posts/sort/sort.md target=_blank>Suggest Changes</a></div></header><div class=toc><details><summary title="(Alt + C)" accesskey=c><span class=details>Table of Contents</span></summary> <div class=inner><ul><li><a aria-label=过度设计导致混乱 href=#guo-du-she-ji-dao-zhi-hun-luan>过度设计导致混乱</a><li><a aria-label=排序算法的实现 href=#pai-xu-suan-fa-de-shi-xian>排序算法的实现</a> <ul><li><a aria-label="冒泡排序 | Bubble Sort" href=#mou-pao-pai-xu-bubble-sort>冒泡排序 | Bubble Sort</a><li><a aria-label="插入排序 | Insertion Sort" href=#cha-ru-pai-xu-insertion-sort>插入排序 | Insertion Sort</a><li><a aria-label="选择排序 | Selection Sort" href=#xuan-ze-pai-xu-selection-sort>选择排序 | Selection Sort</a><li><a aria-label="归并排序 | Merge Sort" href=#gui-bing-pai-xu-merge-sort>归并排序 | Merge Sort</a><li><a aria-label="基数排序 | Radix LSD Sort" href=#ji-shu-pai-xu-radix-lsd-sort>基数排序 | Radix LSD Sort</a><li><a aria-label="快速排序 | Quick Sort" href=#kuai-su-pai-xu-quick-sort>快速排序 | Quick Sort</a></ul><li><a aria-label=BenchMark href=#benchmark>BenchMark</a></ul></div></details></div><div class=post-content><p>排序算法（Sorting Algorithm）是一种将一组特定的数据按某种顺序进行排列的算法。<p>冒泡排序 | 选择排序 | 插入排序 | 归并排序 | 基数排序 | 快速排序</p><span id=continue-reading></span><h1 id=guo-du-she-ji-dao-zhi-hun-luan>过度设计导致混乱</h1><p>对一种排序算法 <code>struct MergeSort</code>，为其实现排序方法 <code>impl Sort for MergeSort</code>。<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span style=color:#b48ead>pub trait </span><span>Sort&LTT, const N: usize> {
+</span><span>    </span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>sort_method</span><span>&LTF>(</span><span style=color:#bf616a>array</span><span>: [T; N], </span><span style=color:#bf616a>is_less</span><span>: F) -> Sorted&LTT, N, impl FnMut(&T, &T) -> </span><span style=color:#b48ead>bool</span><span>>
+</span><span>    </span><span style=color:#b48ead>where
+</span><span>        F: FnMut(&T, &T) -> </span><span style=color:#b48ead>bool</span><span>;
+</span><span>
+</span><span>    fn sort(array: [T; N]) -> Sorted&LTT, N, impl FnMut(&T, &T) -> </span><span style=color:#b48ead>bool</span><span>>
+</span><span>    </span><span style=color:#b48ead>where
+</span><span>        T: Ord,
+</span><span>    {
+</span><span>        </span><span style=color:#b48ead>Self</span><span>::sort_method(array, T::lt)
+</span><span>    }
+</span><span>
+</span><span>    </span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>sort_by</span><span>&LTF>(</span><span style=color:#bf616a>array</span><span>: [T; N], </span><span style=color:#b48ead>mut </span><span style=color:#bf616a>compare</span><span>: F) -> Sorted&LTT, N, impl FnMut(&T, &T) -> </span><span style=color:#b48ead>bool</span><span>>
+</span><span>    </span><span style=color:#b48ead>where
+</span><span>        F: FnMut(&T, &T) -> Ordering,
+</span><span>    {
+</span><span>        </span><span style=color:#b48ead>Self</span><span>::sort_method(array, </span><span style=color:#b48ead>move </span><span>|a, b| </span><span style=color:#96b5b4>compare</span><span>(a, b) == Ordering::Less)
+</span><span>    }
+</span><span>
+</span><span>    </span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>sort_by_key</span><span>&LTF, K>(</span><span style=color:#bf616a>array</span><span>: [T; N], </span><span style=color:#b48ead>mut </span><span style=color:#bf616a>key</span><span>: F) -> Sorted&LTT, N, impl FnMut(&T, &T) -> </span><span style=color:#b48ead>bool</span><span>>
+</span><span>    </span><span style=color:#b48ead>where
+</span><span>        F: FnMut(&T) -> K,
+</span><span>        K: Ord,
+</span><span>    {
+</span><span>        </span><span style=color:#b48ead>Self</span><span>::sort_method(array, </span><span style=color:#b48ead>move </span><span>|a, b| </span><span style=color:#96b5b4>key</span><span>(a) < </span><span style=color:#96b5b4>key</span><span>(b))
+</span><span>    }
+</span><span>}
+</span></code></pre><ol><li>为了标记数组已经被排好序了，排序函数返回一个被标记为 <code>Sorted</code> 的数组。<li>为了给编译器提供更多的优化信息，排序算法只接受一个长度为 <code>N</code> 的数组。<li>为了可以按照用户想要的顺序排序，排序函数接受一个 <code>is_less</code> 函数。</ol><ul><li><p>对于 <code>1</code> 标记数组是有序的没什么问题，已经有序的可以任意的读取，比如使用二分搜索， 但如果想要修改，必须从 <code>Sorted</code> 中 <code>take</code> 出来，此时数组就不再被标记为有序的。 <code>Sorted</code> 承诺：包含的数组是永远有序的。</p><li><p>对于 <code>2</code> 使用泛型来确保数组的长度在编译时确定，提供更多的优化信息，但是丧失了通用性， 比如想排序一个 <code>[i32; 8]</code> 的数组很容易，但是大多时候都是不知道数组的长度的，可能更经常遇到 <code>&[i32]</code>。</p><li><p>对于 <code>3</code> 使用一个函数来确定两个元素之间的大小关系，这也很正常， 但是和 <code>Sorted</code> 有些冲突，<code>Sorted</code> 还需要持有一个比较两个元素大小的函数来说明是按照这种顺序排列的。</p></ul><p>然后就会发现 <code>Sorted</code> 似乎有些没有必要，只能为他实现一些有限的只读方法（如二分搜索），并不是很有用。 只需要程序员确保数组是有序的就可以了，而不是通过类型。同时，这种设计导致了混乱，代码的实现也变得有些复杂和丑陋。<h1 id=pai-xu-suan-fa-de-shi-xian>排序算法的实现</h1><p>最终决定使用 c 语言实现排序算法，并尽量追求易读。<h2 id=mou-pao-pai-xu-bubble-sort>冒泡排序 | Bubble Sort</h2><pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#b48ead>static inline void </span><span style=color:#8fa1b3>bubble_pass</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> i = </span><span style=color:#d08770>1</span><span>; i < len; i++)
+</span><span>    </span><span style=color:#b48ead>if </span><span>(array[i - </span><span style=color:#d08770>1</span><span>] > array[i])
+</span><span>      </span><span style=color:#bf616a>SWAP</span><span>(array[i - </span><span style=color:#d08770>1</span><span>], array[i]);
+</span><span>}
+</span><span>
+</span><span style=color:#b48ead>void </span><span style=color:#8fa1b3>bubble_sort</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> i = len; i > </span><span style=color:#d08770>1</span><span>; i--)
+</span><span>    </span><span style=color:#bf616a>bubble_pass</span><span>(i, array);
+</span><span>}
+</span></code></pre><p><code>SWAP(x, y)</code> 是一个宏函数，它的作用是交换两个变量的值。<pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#b48ead>#define </span><span style=color:#8fa1b3>SWAP</span><span>(</span><span style=color:#bf616a>x</span><span>, </span><span style=color:#bf616a>y</span><span>)  { </span><span style=color:#b48ead>int</span><span> tmp = x; x = y; y = tmp; }
+</span></code></pre><p>冒泡排序就像气泡从水中冒出来，每次冒泡都会把最大的元素顶到数组末尾，称之为一趟 <code>bubble_pass</code>， 而想要冒泡排序完所有的元素，只需要 <code>len</code> 次 <code>bubble_pass</code> 就可以了， 而每次冒泡都确保了最后一个元素一定是最大的，因此下一次冒泡只需要对 <code>len - 1</code> 长度的数组进行排序。<p>也可以写成漂亮的递归形式。<pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#b48ead>void </span><span style=color:#8fa1b3>bubble_sort</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  </span><span style=color:#b48ead>if </span><span>(len <= </span><span style=color:#d08770>1</span><span>) </span><span style=color:#b48ead>return</span><span>;
+</span><span>  </span><span style=color:#bf616a>bubble_pass</span><span>(len, array);
+</span><span>  </span><span style=color:#bf616a>bubble_sort</span><span>(len - </span><span style=color:#d08770>1</span><span>, array);
+</span><span>}
+</span></code></pre><h2 id=cha-ru-pai-xu-insertion-sort>插入排序 | Insertion Sort</h2><pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#65737e>// user should ensure array is sorted. [1, 2, 3, 5, ..., N]
+</span><span style=color:#b48ead>static inline int </span><span style=color:#8fa1b3>insert_by_ord</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len], </span><span style=color:#b48ead>int </span><span style=color:#bf616a>element</span><span>) {
+</span><span>  </span><span style=color:#b48ead>if </span><span>(len == </span><span style=color:#d08770>0</span><span>) </span><span style=color:#b48ead>return</span><span> element;
+</span><span>
+</span><span>  </span><span style=color:#b48ead>int</span><span> last = array[len - </span><span style=color:#d08770>1</span><span>];
+</span><span>  </span><span style=color:#b48ead>if </span><span>(element >= last)
+</span><span>    </span><span style=color:#65737e>// element is greater than or equal array max
+</span><span>    </span><span style=color:#b48ead>return</span><span> element;
+</span><span>
+</span><span>  </span><span style=color:#65737e>// sliding window 2
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>int</span><span> i = len - </span><span style=color:#d08770>2</span><span>; i >= </span><span style=color:#d08770>0</span><span>; i--) {
+</span><span>    </span><span style=color:#b48ead>int</span><span> wave = array[i];
+</span><span>
+</span><span>    </span><span style=color:#b48ead>if </span><span>(element >= wave) {
+</span><span>      </span><span style=color:#65737e>// element meet the first less than or equal self
+</span><span>      array[i + </span><span style=color:#d08770>1</span><span>] = element;
+</span><span>      </span><span style=color:#b48ead>return</span><span> last;
+</span><span>    }
+</span><span>
+</span><span>    array[i + </span><span style=color:#d08770>1</span><span>] = wave;
+</span><span>  }
+</span><span>
+</span><span>  </span><span style=color:#65737e>// element is less than array min
+</span><span>  array[</span><span style=color:#d08770>0</span><span>] = element;
+</span><span>  </span><span style=color:#b48ead>return</span><span> last;
+</span><span>}
+</span><span>
+</span><span style=color:#b48ead>void </span><span style=color:#8fa1b3>insertion_sort</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> i = </span><span style=color:#d08770>0</span><span>; i < len; i++) {
+</span><span>    </span><span style=color:#b48ead>int</span><span> tmp = </span><span style=color:#bf616a>insert_by_ord</span><span>(i, array, array[i]);
+</span><span>    array[i] = tmp;
+</span><span>  }
+</span><span>}
+</span></code></pre><p>将输入数组分为两个部分，前面部分是已经排序的，后面部分是未排序的。 对于第一次执行，前面部分为空 <code>[i32; 0]</code>，后面部分为原数组。 对于每次插入操作 <code>insert_by_ord</code> 会将 <code>element</code> 插入到数组中合适的位置，并返回从数组中挤出来的元素。 将后面的数组所有元素都插入到前面的数组中 <code>insertion_sort</code><h2 id=xuan-ze-pai-xu-selection-sort>选择排序 | Selection Sort</h2><pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#b48ead>typedef struct</span><span> MinMaxIndex {
+</span><span>  </span><span style=color:#b48ead>unsigned</span><span> min;
+</span><span>  </span><span style=color:#b48ead>unsigned</span><span> max;
+</span><span>} MinMaxIndex;
+</span><span>
+</span><span style=color:#b48ead>static inline</span><span> MinMaxIndex </span><span style=color:#8fa1b3>select_maxmin_index</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  MinMaxIndex minmax = {</span><span style=color:#d08770>0</span><span>, </span><span style=color:#d08770>0</span><span>};
+</span><span>
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> i = </span><span style=color:#d08770>1</span><span>; i < len; i++) {
+</span><span>    </span><span style=color:#b48ead>if </span><span>(array[i] < array[minmax.</span><span style=color:#bf616a>min</span><span>])
+</span><span>      minmax.</span><span style=color:#bf616a>min </span><span>= i;
+</span><span>    </span><span style=color:#b48ead>else if </span><span>(array[i] > array[minmax.</span><span style=color:#bf616a>max</span><span>])
+</span><span>      minmax.</span><span style=color:#bf616a>max </span><span>= i;
+</span><span>  }
+</span><span>
+</span><span>  </span><span style=color:#b48ead>return</span><span> minmax;
+</span><span>}
+</span><span>
+</span><span style=color:#b48ead>void </span><span style=color:#8fa1b3>selection_sort</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  </span><span style=color:#b48ead>if </span><span>(len < </span><span style=color:#d08770>2</span><span>) </span><span style=color:#b48ead>return</span><span>;
+</span><span>
+</span><span>  MinMaxIndex minmax = </span><span style=color:#bf616a>select_maxmin_index</span><span>(len, array);
+</span><span>
+</span><span>  </span><span style=color:#b48ead>if </span><span>(minmax.</span><span style=color:#bf616a>max </span><span>== </span><span style=color:#d08770>0</span><span>) {
+</span><span>    </span><span style=color:#bf616a>SWAP</span><span>(array[minmax.</span><span style=color:#bf616a>min</span><span>], array[</span><span style=color:#d08770>0</span><span>]);
+</span><span>    </span><span style=color:#bf616a>SWAP</span><span>(array[minmax.</span><span style=color:#bf616a>min</span><span>], array[len - </span><span style=color:#d08770>1</span><span>]);
+</span><span>  } </span><span style=color:#b48ead>else </span><span>{
+</span><span>    </span><span style=color:#bf616a>SWAP</span><span>(array[minmax.</span><span style=color:#bf616a>min</span><span>], array[</span><span style=color:#d08770>0</span><span>]);
+</span><span>    </span><span style=color:#bf616a>SWAP</span><span>(array[minmax.</span><span style=color:#bf616a>max</span><span>], array[len - </span><span style=color:#d08770>1</span><span>]);
+</span><span>  }
+</span><span>
+</span><span>  </span><span style=color:#bf616a>selection_sort</span><span>(len - </span><span style=color:#d08770>2</span><span>, &array[</span><span style=color:#d08770>1</span><span>]);
+</span><span>}
+</span></code></pre><p>选择排序通过 <code>select_maxmin_index</code> 遍历数组找到最大值和最小值的下标， 然后将最小的元素和第一个元素交换，最大的元素和最后一个元素交换， 然后对于除了第一个和最后一个元素外的剩余元素执行 <code>selection_sort</code>。<p>可能会对交换最大最小元素和首尾元素的代码感到疑惑，其实代码有三版 😭<pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#65737e>/// Error: Read the modified area
+</span><span style=color:#65737e>/// [4, 3, 3, 1] --error-> [4, 3, 3, 1]
+</span><span style=color:#bf616a>SWAP</span><span>(array[minmax.</span><span style=color:#bf616a>min</span><span>], array[</span><span style=color:#d08770>0</span><span>]);
+</span><span style=color:#bf616a>SWAP</span><span>(array[minmax.</span><span style=color:#bf616a>max</span><span>], array[len - </span><span style=color:#d08770>1</span><span>]);
+</span></code></pre><pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#65737e>/// Error: Double write.
+</span><span style=color:#65737e>/// [3, 1, 2] --error-> [1, 3, 3]
+</span><span style=color:#65737e>// copy
+</span><span style=color:#b48ead>int</span><span> max = array[minmax.</span><span style=color:#bf616a>max</span><span>];
+</span><span style=color:#b48ead>int</span><span> min = array[minmax.</span><span style=color:#bf616a>min</span><span>];
+</span><span style=color:#b48ead>int</span><span> head = array[</span><span style=color:#d08770>0</span><span>];
+</span><span style=color:#b48ead>int</span><span> tail = array[len - </span><span style=color:#d08770>1</span><span>];
+</span><span style=color:#65737e>// write
+</span><span>array[minmax.</span><span style=color:#bf616a>min</span><span>] = head;
+</span><span>array[minmax.</span><span style=color:#bf616a>max</span><span>] = tail;
+</span><span>array[len - </span><span style=color:#d08770>1</span><span>] = max;
+</span><span>array[</span><span style=color:#d08770>0</span><span>] = min;
+</span></code></pre><pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#b48ead>if </span><span>(minmax.</span><span style=color:#bf616a>max </span><span>== </span><span style=color:#d08770>0</span><span>) {
+</span><span>  </span><span style=color:#bf616a>SWAP</span><span>(array[minmax.</span><span style=color:#bf616a>min</span><span>], array[</span><span style=color:#d08770>0</span><span>]);
+</span><span>  </span><span style=color:#bf616a>SWAP</span><span>(array[minmax.</span><span style=color:#bf616a>min</span><span>], array[len - </span><span style=color:#d08770>1</span><span>]);
+</span><span>} </span><span style=color:#b48ead>else </span><span>{
+</span><span>  </span><span style=color:#bf616a>SWAP</span><span>(array[minmax.</span><span style=color:#bf616a>min</span><span>], array[</span><span style=color:#d08770>0</span><span>]);
+</span><span>  </span><span style=color:#bf616a>SWAP</span><span>(array[minmax.</span><span style=color:#bf616a>max</span><span>], array[len - </span><span style=color:#d08770>1</span><span>]);
+</span><span>}
+</span></code></pre><p>这些错误十分隐蔽，只有通过合适的测试才能发现它们。<h2 id=gui-bing-pai-xu-merge-sort>归并排序 | Merge Sort</h2><pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#65737e>/// Merge two sorted array into one sorted array
+</span><span style=color:#65737e>///
+</span><span style=color:#65737e>/// # Example
+</span><span style=color:#65737e>///
+</span><span style=color:#65737e>/// int array[] = {1, 3, 5, 0, 3, 4, 4, 8};
+</span><span style=color:#65737e>/// //                     ^split        ^len
+</span><span style=color:#65737e>/// merge_two_sorted_array(8, array, 3);
+</span><span style=color:#65737e>/// // array = {0, 1, 3, 3, 4, 4, 5, 8}
+</span><span style=color:#b48ead>void </span><span style=color:#8fa1b3>merge_two_sorted_array</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len], </span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>split</span><span>);
+</span></code></pre><p><code>merge_two_sorted_array</code> 将两个有序数组合并成一个有序数组。<pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#b48ead>void </span><span style=color:#8fa1b3>merge_sort_rec</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  </span><span style=color:#b48ead>if </span><span>(len <= </span><span style=color:#d08770>1</span><span>) </span><span style=color:#b48ead>return</span><span>;
+</span><span>
+</span><span>  </span><span style=color:#b48ead>unsigned</span><span> half = len / </span><span style=color:#d08770>2</span><span>;
+</span><span>  </span><span style=color:#bf616a>merge_sort_rec</span><span>(half, array);
+</span><span>  </span><span style=color:#bf616a>merge_sort_rec</span><span>(len - half, &array[half]);
+</span><span>
+</span><span>  </span><span style=color:#bf616a>merge_two_sorted_array</span><span>(len, array, half);
+</span><span>}
+</span></code></pre><p><code>merge_sort_rec</code> 递归地将数组划分成更小的数组，直到数组长度小于等于1，然后合并两个有序数组。<p>对于自底向上，将数组划分为一系列的有序的块(n)，对于每个两个相邻的块进行合并为一个块(n/2)， 每次合并其块总数变为一半，块的大小变为两倍，然后再对相邻块合并，直到块的大小超过了数组长度。<pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#b48ead>void </span><span style=color:#8fa1b3>merge_adjacent_blocks</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len], </span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>block_size</span><span>) {
+</span><span>  </span><span style=color:#b48ead>if </span><span>(block_size >= len)
+</span><span>    </span><span style=color:#65737e>// Only have one block and have sorted.
+</span><span>    </span><span style=color:#b48ead>return</span><span>;
+</span><span>
+</span><span>  </span><span style=color:#b48ead>unsigned</span><span> blocks = len / block_size; </span><span style=color:#65737e>// blocks >= 1
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> i = </span><span style=color:#d08770>0</span><span>; i < blocks / </span><span style=color:#d08770>2</span><span>; i++)
+</span><span>    </span><span style=color:#bf616a>merge_two_sorted_array</span><span>(block_size * </span><span style=color:#d08770>2</span><span>, &array[i * </span><span style=color:#d08770>2 </span><span>* block_size], block_size);
+</span><span>
+</span><span>  </span><span style=color:#b48ead>if </span><span>(blocks % </span><span style=color:#d08770>2 </span><span>== </span><span style=color:#d08770>1 </span><span>&& len > block_size * blocks) {
+</span><span>    </span><span style=color:#65737e>// The last block is not full and remain the second last block not merge.
+</span><span>    </span><span style=color:#b48ead>unsigned</span><span> lave = len - block_size * blocks;
+</span><span>    </span><span style=color:#bf616a>merge_two_sorted_array</span><span>(block_size + lave, &array[len - lave - block_size], block_size);
+</span><span>  }
+</span><span>}
+</span><span>
+</span><span style=color:#b48ead>void </span><span style=color:#8fa1b3>merge_sort_adjacent_blocks</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> block_size = </span><span style=color:#d08770>1</span><span>; block_size <= len; block_size *= </span><span style=color:#d08770>2</span><span>)
+</span><span>    </span><span style=color:#bf616a>merge_adjacent_blocks</span><span>(len, array, block_size);
+</span><span>}
+</span></code></pre><p>然后我们就可以将数组划分为多个块，并行的进行排序。 使用 <code>openmp</code> 对多个块并行排序，然后再合并排好序的数组。<pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#65737e>// return block_size
+</span><span style=color:#b48ead>unsigned </span><span style=color:#8fa1b3>parallel_sort_blocks</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  </span><span style=color:#b48ead>const unsigned</span><span> DEFAULT_BLOCK_SIZE = </span><span style=color:#d08770>128</span><span>;
+</span><span>  </span><span style=color:#b48ead>const unsigned</span><span> MAX_BLOCKS = </span><span style=color:#d08770>64</span><span>;
+</span><span>  </span><span style=color:#b48ead>unsigned</span><span> block_size = len / DEFAULT_BLOCK_SIZE > MAX_BLOCKS
+</span><span>                            ? len / MAX_BLOCKS
+</span><span>                            : DEFAULT_BLOCK_SIZE;
+</span><span>  </span><span style=color:#b48ead>unsigned</span><span> blocks = len / block_size;
+</span><span>
+</span><span style=color:#b48ead>#pragma</span><span> omp parallel for
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> i = </span><span style=color:#d08770>0</span><span>; i < blocks; i++)
+</span><span>    </span><span style=color:#bf616a>merge_sort_rec</span><span>(block_size, &array[i * block_size]);
+</span><span>
+</span><span>  </span><span style=color:#b48ead>if </span><span>(len > block_size * blocks)
+</span><span>    </span><span style=color:#65737e>// the last block is not full.
+</span><span>    </span><span style=color:#bf616a>merge_sort_rec</span><span>(len - (blocks * block_size), &array[blocks * block_size]);
+</span><span>
+</span><span>  </span><span style=color:#b48ead>return</span><span> block_size;
+</span><span>}
+</span><span>
+</span><span style=color:#b48ead>void </span><span style=color:#8fa1b3>merge_sort_parallel</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  </span><span style=color:#b48ead>unsigned</span><span> block_size = </span><span style=color:#bf616a>parallel_sort_blocks</span><span>(len, array);
+</span><span>  </span><span style=color:#b48ead>for </span><span>(; block_size <= len; block_size *= </span><span style=color:#d08770>2</span><span>)
+</span><span>    </span><span style=color:#bf616a>merge_adjacent_blocks</span><span>(len, array, block_size);
+</span><span>}
+</span></code></pre><h2 id=ji-shu-pai-xu-radix-lsd-sort>基数排序 | Radix LSD Sort</h2><pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#b48ead>typedef struct</span><span> LinkNode {
+</span><span>  </span><span style=color:#b48ead>unsigned</span><span> data;
+</span><span>  </span><span style=color:#b48ead>struct</span><span> LinkNode *next;
+</span><span>} LinkNode;
+</span><span>
+</span><span style=color:#b48ead>typedef struct</span><span> LinkList {
+</span><span>  LinkNode *head;
+</span><span>  LinkNode *tail;
+</span><span>} LinkList;
+</span></code></pre><p>定义链表，使用 <code>VLA</code> 可变长数组在栈上创建一段缓冲区 <code>LinkNode node_buf[len]</code><p>基数排序将一个数字分为 <code>num_of_keys</code> 个子数字，每个子数字的范围是 <code>[0, base)</code>。 根据最后一个子数字的大小，将元素分到 <code>base</code> 个桶中，然后再将桶合并。 接下来根据第二个子数字的大小，分配然后合并，如此往复，最终将整个数组排序。<pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#65737e>/// Radix LSD Sort
+</span><span style=color:#65737e>///
+</span><span style=color:#65737e>/// default base is 256, number of keys is 4
+</span><span style=color:#65737e>/// radix_lsd_sort_with(len, array[len], 256, 4);
+</span><span style=color:#65737e>///
+</span><span style=color:#65737e>/// # Example
+</span><span style=color:#65737e>///
+</span><span style=color:#65737e>/// int array[] = {1, 3, 5, 0, 3, 4, 4, 8};
+</span><span style=color:#65737e>/// radix_sort(8, array);
+</span><span style=color:#65737e>/// // array = {0, 1, 3, 3, 4, 4, 5, 8}
+</span><span style=color:#b48ead>void </span><span style=color:#8fa1b3>radix_lsd_sort</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  </span><span style=color:#b48ead>const unsigned</span><span> BIAS = UINT_MAX / </span><span style=color:#d08770>2 </span><span>+ </span><span style=color:#d08770>1</span><span>;
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> i = </span><span style=color:#d08770>0</span><span>; i < len; i++)
+</span><span>    array[i] = (</span><span style=color:#b48ead>unsigned</span><span>)array[i] + BIAS;
+</span><span>
+</span><span>  </span><span style=color:#bf616a>radix_lsd_sort_with</span><span>(len, (</span><span style=color:#b48ead>unsigned </span><span>*)array, </span><span style=color:#d08770>256</span><span>, </span><span style=color:#d08770>4</span><span>);
+</span><span>
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> i = </span><span style=color:#d08770>0</span><span>; i < len; i++)
+</span><span>    array[i] = (</span><span style=color:#b48ead>int</span><span>)(array[i] - BIAS);
+</span><span>}
+</span></code></pre><p>为了能对有符号数据进行基数排序，我们需要将数据转换为无符号数并保留大小关系，排完序后再转换回来。 然后调用 <code>radix_lsd_sort_with(len, array, 256, 4)</code> 以基数 256 排序，并将数字分为 4 个子数字。 对于编译器能否将常量基数 256 优化成右移，看造化吧 :)<pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#65737e>/// Radix LSD Sort with base and number of keys
+</span><span style=color:#65737e>///
+</span><span style=color:#65737e>/// Split the element into `num_of_keys` keys no greater than `base`
+</span><span style=color:#65737e>///
+</span><span style=color:#65737e>/// # Warning
+</span><span style=color:#65737e>///
+</span><span style=color:#65737e>/// The element of `array` must be no greater than `num_of_keys * base`
+</span><span style=color:#b48ead>static inline void </span><span style=color:#8fa1b3>radix_lsd_sort_with</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>array</span><span>[len],
+</span><span>                                       </span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>base</span><span>, </span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>num_of_keys</span><span>) {
+</span><span>  LinkNode node_buf[len];
+</span><span>  LinkList list = </span><span style=color:#bf616a>array2linklist</span><span>(len, array, node_buf);
+</span><span>
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> i = </span><span style=color:#d08770>0</span><span>, offset = </span><span style=color:#d08770>1</span><span>; i < num_of_keys; i += </span><span style=color:#d08770>1</span><span>, offset *= base)
+</span><span>    list = </span><span style=color:#bf616a>radix_split_and_merge</span><span>(list, offset, base);
+</span><span>
+</span><span>  </span><span style=color:#bf616a>linklist2array</span><span>(len, list, array);
+</span><span>}
+</span></code></pre><p>先将数组转换为链表，然后对链表进行基数排序，最后再将链表转换为数组。 对链表进行基数排序，只需要对链表中的元素 <code>(e / offset) % base</code> 然后桶装然后合并， 如此重复 <code>num_of_keys</code> 次（并更新 <code>offset</code>）就获得一个有序的链表。<pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#b48ead>static inline</span><span> LinkList </span><span style=color:#8fa1b3>radix_split_and_merge</span><span>(LinkList </span><span style=color:#bf616a>list</span><span>, </span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>offset</span><span>,
+</span><span>                                             </span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>base</span><span>) {
+</span><span>  LinkList bucket[base];
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> i = </span><span style=color:#d08770>0</span><span>; i < base; i++)
+</span><span>    bucket[i] = (LinkList){.</span><span style=color:#bf616a>head </span><span>= </span><span style=color:#d08770>NULL</span><span>, .</span><span style=color:#bf616a>tail </span><span>= </span><span style=color:#d08770>NULL</span><span>};
+</span><span>
+</span><span>  LinkNode *iter = list.</span><span style=color:#bf616a>head</span><span>;
+</span><span>  </span><span style=color:#b48ead>while </span><span>(iter != </span><span style=color:#d08770>NULL</span><span>) {
+</span><span>    </span><span style=color:#b48ead>unsigned</span><span> index = (iter->data / offset) % base;
+</span><span>    LinkNode *next = </span><span style=color:#bf616a>linklist_push_one</span><span>(&bucket[index], iter);
+</span><span>    iter = next;
+</span><span>  }
+</span><span>
+</span><span>  LinkList result = bucket[</span><span style=color:#d08770>0</span><span>];
+</span><span>  </span><span style=color:#b48ead>for </span><span>(</span><span style=color:#b48ead>unsigned</span><span> i = </span><span style=color:#d08770>1</span><span>; i < base; i++)
+</span><span>    result = </span><span style=color:#bf616a>linklist_append</span><span>(result, bucket[i]);
+</span><span>  </span><span style=color:#b48ead>return</span><span> result;
+</span><span>}
+</span></code></pre><p>迭代遍历链表，将链表中的元素 <code>(e / offset) % base</code> 然后插入桶 <code>bucket[base]</code> 中，然后合并所有桶。<h2 id=kuai-su-pai-xu-quick-sort>快速排序 | Quick Sort</h2><pre class=language-c data-lang=c style=color:#c0c5ce;background-color:#2b303b><code class=language-c data-lang=c><span style=color:#b48ead>void </span><span style=color:#8fa1b3>quick_sort</span><span>(</span><span style=color:#b48ead>unsigned </span><span style=color:#bf616a>len</span><span>, </span><span style=color:#b48ead>int </span><span style=color:#bf616a>array</span><span>[len]) {
+</span><span>  </span><span style=color:#b48ead>if </span><span>(len <= </span><span style=color:#d08770>1</span><span>)
+</span><span>    </span><span style=color:#b48ead>return</span><span>;
+</span><span>
+</span><span>  </span><span style=color:#b48ead>int</span><span> pivot = array[</span><span style=color:#d08770>0</span><span>]; </span><span style=color:#65737e>// take first as pivot
+</span><span>  </span><span style=color:#b48ead>int </span><span>*left = &array[</span><span style=color:#d08770>1</span><span>];
+</span><span>  </span><span style=color:#b48ead>int </span><span>*right = &array[len];
+</span><span>
+</span><span>  </span><span style=color:#b48ead>while </span><span>(left < right) {
+</span><span>    </span><span style=color:#b48ead>if </span><span>(*left <= pivot) {
+</span><span>      left += </span><span style=color:#d08770>1</span><span>;
+</span><span>    } </span><span style=color:#b48ead>else </span><span>{
+</span><span>      right -= </span><span style=color:#d08770>1</span><span>;
+</span><span>      </span><span style=color:#bf616a>SWAP</span><span>(*left, *right);
+</span><span>    }
+</span><span>  }
+</span><span>
+</span><span>  </span><span style=color:#bf616a>SWAP</span><span>(*(left - </span><span style=color:#d08770>1</span><span>), array[</span><span style=color:#d08770>0</span><span>]);
+</span><span>
+</span><span>  </span><span style=color:#bf616a>quick_sort</span><span>(left - array - </span><span style=color:#d08770>1</span><span>, array);
+</span><span>  </span><span style=color:#bf616a>quick_sort</span><span>(array + len - right, right);
+</span><span>}
+</span></code></pre><p>选择第一个元素作为基准，将数组分为两部分，左边的都比基准小，右边的都比基准大。 然后递归地对左边和右边的数组进行快速排序。<h1 id=benchmark>BenchMark</h1><p>本次设计仍有问题，不具有参考价值。<pre class=language-console data-lang=console style=color:#c0c5ce;background-color:#2b303b><code class=language-console data-lang=console><span>test csort::tests::bench::bubble::gaussian_with_noise                ... bench:     340,889.20 ns/iter (+/- 130,392.50)
+</span><span>test csort::tests::bench::bubble::high_sample_sin_with_noise         ... bench:     339,712.45 ns/iter (+/- 12,469.97)
+</span><span>test csort::tests::bench::bubble::low_sample_sin_with_noise          ... bench:     340,981.80 ns/iter (+/- 110,796.67)
+</span><span>test csort::tests::bench::bubble::random                             ... bench:  34,957,551.50 ns/iter (+/- 3,410,550.90)
+</span><span>test csort::tests::bench::bubble::stroll                             ... bench:  34,862,127.00 ns/iter (+/- 3,108,527.50)
+</span><span>test csort::tests::bench::bubble::trend_increasing                   ... bench:     341,875.30 ns/iter (+/- 125,752.78)
+</span><span>test csort::tests::bench::cstd_qsort::gaussian_with_noise            ... bench:      14,948.66 ns/iter (+/- 9,671.89)
+</span><span>test csort::tests::bench::cstd_qsort::high_sample_sin_with_noise     ... bench:      15,045.78 ns/iter (+/- 9,829.04)
+</span><span>test csort::tests::bench::cstd_qsort::low_sample_sin_with_noise      ... bench:      15,038.26 ns/iter (+/- 3,390.93)
+</span><span>test csort::tests::bench::cstd_qsort::random                         ... bench:     185,289.35 ns/iter (+/- 90,925.77)
+</span><span>test csort::tests::bench::cstd_qsort::stroll                         ... bench:     186,603.78 ns/iter (+/- 54,371.42)
+</span><span>test csort::tests::bench::cstd_qsort::trend_increasing               ... bench:      14,965.57 ns/iter (+/- 990.55)
+</span><span>test csort::tests::bench::insertion::gaussian_with_noise             ... bench:         474.50 ns/iter (+/- 52.69)
+</span><span>test csort::tests::bench::insertion::high_sample_sin_with_noise      ... bench:         474.28 ns/iter (+/- 125.33)
+</span><span>test csort::tests::bench::insertion::low_sample_sin_with_noise       ... bench:         468.62 ns/iter (+/- 178.76)
+</span><span>test csort::tests::bench::insertion::random                          ... bench:       4,677.77 ns/iter (+/- 1,472.75)
+</span><span>test csort::tests::bench::insertion::stroll                          ... bench:       4,702.79 ns/iter (+/- 3,031.50)
+</span><span>test csort::tests::bench::insertion::trend_increasing                ... bench:         474.13 ns/iter (+/- 216.46)
+</span><span>test csort::tests::bench::merge::gaussian_with_noise                 ... bench:       8,029.80 ns/iter (+/- 2,176.44)
+</span><span>test csort::tests::bench::merge::high_sample_sin_with_noise          ... bench:       7,707.73 ns/iter (+/- 813.41)
+</span><span>test csort::tests::bench::merge::low_sample_sin_with_noise           ... bench:       7,769.37 ns/iter (+/- 59.58)
+</span><span>test csort::tests::bench::merge::random                              ... bench:      84,954.48 ns/iter (+/- 1,245.39)
+</span><span>test csort::tests::bench::merge::stroll                              ... bench:      85,204.15 ns/iter (+/- 2,103.85)
+</span><span>test csort::tests::bench::merge::trend_increasing                    ... bench:       7,769.06 ns/iter (+/- 66.77)
+</span><span>test csort::tests::bench::merge_parallel::gaussian_with_noise        ... bench:       5,455.78 ns/iter (+/- 1,242.05)
+</span><span>test csort::tests::bench::merge_parallel::high_sample_sin_with_noise ... bench:       5,548.66 ns/iter (+/- 1,807.09)
+</span><span>test csort::tests::bench::merge_parallel::low_sample_sin_with_noise  ... bench:       5,476.28 ns/iter (+/- 494.94)
+</span><span>test csort::tests::bench::merge_parallel::random                     ... bench:      36,199.32 ns/iter (+/- 5,999.14)
+</span><span>test csort::tests::bench::merge_parallel::stroll                     ... bench:      36,338.08 ns/iter (+/- 11,186.60)
+</span><span>test csort::tests::bench::merge_parallel::trend_increasing           ... bench:       5,486.77 ns/iter (+/- 408.39)
+</span><span>test csort::tests::bench::quick_sort::gaussian_with_noise            ... bench:      27,331.49 ns/iter (+/- 628.50)
+</span><span>test csort::tests::bench::quick_sort::high_sample_sin_with_noise     ... bench:      27,288.86 ns/iter (+/- 563.52)
+</span><span>test csort::tests::bench::quick_sort::low_sample_sin_with_noise      ... bench:      27,170.24 ns/iter (+/- 439.15)
+</span><span>test csort::tests::bench::quick_sort::random                         ... bench:     822,955.95 ns/iter (+/- 18,973.80)
+</span><span>test csort::tests::bench::quick_sort::stroll                         ... bench:     806,819.55 ns/iter (+/- 14,638.76)
+</span><span>test csort::tests::bench::quick_sort::trend_increasing               ... bench:      27,341.90 ns/iter (+/- 705.38)
+</span><span>test csort::tests::bench::radix_lsd::gaussian_with_noise             ... bench:       9,347.28 ns/iter (+/- 159.57)
+</span><span>test csort::tests::bench::radix_lsd::high_sample_sin_with_noise      ... bench:       9,176.39 ns/iter (+/- 197.14)
+</span><span>test csort::tests::bench::radix_lsd::low_sample_sin_with_noise       ... bench:       8,921.27 ns/iter (+/- 189.30)
+</span><span>test csort::tests::bench::radix_lsd::random                          ... bench:      73,262.34 ns/iter (+/- 536.66)
+</span><span>test csort::tests::bench::radix_lsd::stroll                          ... bench:      68,302.56 ns/iter (+/- 778.09)
+</span><span>test csort::tests::bench::radix_lsd::trend_increasing                ... bench:       8,745.26 ns/iter (+/- 206.40)
+</span><span>test csort::tests::bench::rust_stable::gaussian_with_noise           ... bench:         237.93 ns/iter (+/- 8.98)
+</span><span>test csort::tests::bench::rust_stable::high_sample_sin_with_noise    ... bench:         235.83 ns/iter (+/- 186.60)
+</span><span>test csort::tests::bench::rust_stable::low_sample_sin_with_noise     ... bench:         236.56 ns/iter (+/- 5.78)
+</span><span>test csort::tests::bench::rust_stable::random                        ... bench:       2,346.31 ns/iter (+/- 37.19)
+</span><span>test csort::tests::bench::rust_stable::stroll                        ... bench:       2,360.04 ns/iter (+/- 43.39)
+</span><span>test csort::tests::bench::rust_stable::trend_increasing              ... bench:         235.54 ns/iter (+/- 3.81)
+</span><span>test csort::tests::bench::selection::gaussian_with_noise             ... bench:     372,126.70 ns/iter (+/- 4,828.52)
+</span><span>test csort::tests::bench::selection::high_sample_sin_with_noise      ... bench:     370,465.57 ns/iter (+/- 2,651.91)
+</span><span>test csort::tests::bench::selection::low_sample_sin_with_noise       ... bench:     370,717.30 ns/iter (+/- 3,108.06)
+</span><span>test csort::tests::bench::selection::random                          ... bench:  37,867,238.80 ns/iter (+/- 393,008.45)
+</span><span>test csort::tests::bench::selection::stroll                          ... bench:  37,757,740.20 ns/iter (+/- 315,227.42)
+</span><span>test csort::tests::bench::selection::trend_increasing                ... bench:     380,573.42 ns/iter (+/- 6,010.24)
+</span><span>test merge_two_sorted::tests::bench::array1k                         ... bench:         238.10 ns/iter (+/- 4.32)
+</span></code></pre></div><footer class=post-footer><ul class=post-tags><li><a href=https://xj63.github.io/Algorithm-Implementation-Notes/tags/array/>array</a><li><a href=https://xj63.github.io/Algorithm-Implementation-Notes/tags/sort/>sort</a><li><a href=https://xj63.github.io/Algorithm-Implementation-Notes/tags/test/>test</a></ul><nav class=paginav><a class=prev href=https://xj63.github.io/Algorithm-Implementation-Notes/posts/sort/measure-sort-performance/> <span class=title>« Prev</span> <br> <span>测量排序性能 | Measure Sort Performance</span> </a></nav></footer></article></main><footer class=footer><span>© 2024 <a href=https://xj63.github.io/Algorithm-Implementation-Notes>xj63</a></span><span> Powered by <a rel="noopener noreferrer" href=https://www.getzola.org/ target=_blank>Zola</a> & <a href=https://github.com/cydave/zola-theme-papermod rel=noopener target=_blank>PaperMod</a> </span></footer><a aria-label="go to top" title="Go to Top (Alt + G)" accesskey=g class=top-link href=#top id=top-link> <svg viewbox="0 0 12 6" fill=currentColor xmlns=http://www.w3.org/2000/svg><path d="M12 6H0l6-6z"/></svg> </a><script>let menu=document.getElementById(`menu`);if(menu){let a=`menu-scroll-position`;menu.scrollLeft=localStorage.getItem(a);menu.onscroll=(()=>{localStorage.setItem(a,menu.scrollLeft)})};document.querySelectorAll(`a[href^="#"]`).forEach(a=>{let c=null,b=decodeURIComponent;a.addEventListener(`click`,function(a){a.preventDefault();var d=this.getAttribute(`href`).substr(1);if(!window.matchMedia(`(prefers-reduced-motion: reduce)`).matches){document.querySelector(`[id='${b(d)}']`).scrollIntoView({behavior:`smooth`})}else{document.querySelector(`[id='${b(d)}']`).scrollIntoView()};if(d===`top`){history.replaceState(c,c,` `)}else{history.pushState(c,c,`#${d}`)}})})</script><script>var mybutton=document.getElementById(`top-link`);window.onscroll=(()=>{let a=800;if(document.body.scrollTop>a||document.documentElement.scrollTop>a){mybutton.style.visibility=`visible`;mybutton.style.opacity=`1`}else{mybutton.style.visibility=`hidden`;mybutton.style.opacity=`0`}})</script><script>document.getElementById(`theme-toggle`).addEventListener(`click`,()=>{let b=`pref-theme`,a=`dark`;if(document.body.className.includes(a)){document.body.classList.remove(a);localStorage.setItem(b,`light`)}else{document.body.classList.add(a);localStorage.setItem(b,a)}})</script><script>document.querySelectorAll(`pre > code`).forEach(a=>{let f=`TABLE`,e=`copy`;var d=(()=>{c.innerText=`copied!`;setTimeout(()=>{c.innerText=e},2000)});const b=a.parentNode.parentNode;const c=document.createElement(`button`);c.classList.add(`copy-code`);c.innerText=e;c.addEventListener(`click`,b=>{if(`clipboard` in navigator){var c=a.textContent;if(a.firstChild.tagName==f){c=Array(...a.firstChild.getElementsByTagName(`span`)).map(a=>a.textContent).join(``)};navigator.clipboard.writeText(c);d();return};const g=document.createRange();g.selectNodeContents(a);const h=window.getSelection();h.removeAllRanges();h.addRange(g);try{document.execCommand(e);d()}catch(a){}h.removeRange(g)});if(b.classList.contains(`highlight`)){b.appendChild(c)}else if(b.parentNode.firstChild==b){}else if(a.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName==f){a.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(c)}else{a.parentNode.appendChild(c)}})</script>
